@@ -2,11 +2,14 @@ import pandas as pd
 from sklearn.model_selection import train_test_split , KFold, cross_val_score
 from sklearn.linear_model import LogisticRegression 
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 import numpy as np
 
 def load_and_prepare_data(file_path):
     df = pd.read_csv(file_path)
+
+    if(file_path == 'cancer.csv'):
+        df = df.drop(columns=['Unnamed: 32'])
 
     missing_values = df.isnull().sum()
     if missing_values.any():
@@ -17,11 +20,24 @@ def load_and_prepare_data(file_path):
 
     return df_cleaned
 
-def detect_label_column(df):
-    label_column = df.columns[-1]
+def detect_label_column(df, file_path):
+    if(file_path == 'cancer.csv'):
+        label_column = df.columns[1]
+    else:
+        label_column = df.columns[-1]
+
     return label_column
 
-def plot_mean_accuracy_graph(mean_accuracy):
+def encode_labels(y):
+    if y.dtype == 'object':
+        label_encoder = LabelEncoder()
+        y_encoded = label_encoder.fit_transform(y)
+    else:
+        y_encoded = y
+    
+    return y_encoded
+
+def plot_mean_accuracy_graph(mean_accuracies):
     num_datasets = len(mean_accuracies)
     x_positions = np.arange(num_datasets)
 
@@ -35,10 +51,12 @@ def plot_mean_accuracy_graph(mean_accuracy):
 def run_logistic_regression_evaluation(file_path):
     df = load_and_prepare_data(file_path)
 
-    label_column = detect_label_column(df)
+    label_column = detect_label_column(df, file_path)
 
     X = df.drop(columns=[label_column])
     y = df[label_column]
+
+    y_encoded = encode_labels(y)
 
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
@@ -51,7 +69,7 @@ def run_logistic_regression_evaluation(file_path):
 
     for train_index, test_index in kf.split(X_scaled):
         X_train, X_test = X_scaled[train_index], X_scaled[test_index]
-        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+        y_train, y_test = y_encoded[train_index], y_encoded[test_index]
         
         logisticRegression.fit(X_train, y_train)
         accuracy = logisticRegression.score(X_test, y_test)
@@ -72,7 +90,7 @@ def main(mean_accuracy, file_paths):
 
     plot_mean_accuracy_graph(mean_accuracies)
 
-file_paths = ['winequality-red.csv', 'diabetes.csv']
+file_paths = ['winequality-red.csv', 'diabetes.csv', 'cancer.csv']
 mean_accuracies = []
 
 main(mean_accuracies, file_paths)
