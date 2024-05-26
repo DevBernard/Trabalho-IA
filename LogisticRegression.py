@@ -1,8 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split , KFold, cross_val_score
 from sklearn.linear_model import LogisticRegression 
-from sklearn import metrics 
-import seaborn as sn 
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 import numpy as np
@@ -23,7 +21,18 @@ def detect_label_column(df):
     label_column = df.columns[-1]
     return label_column
 
-def main(file_path):
+def plot_mean_accuracy_graph(mean_accuracy):
+    num_datasets = len(mean_accuracies)
+    x_positions = np.arange(num_datasets)
+
+    plt.bar(x_positions, mean_accuracies, color='blue')
+    plt.xticks(x_positions, file_paths, rotation=45)
+    plt.xlabel('Conjunto de Dados')
+    plt.ylabel('Acurácia Média')
+    plt.title('Acurácia Média do Classificador por Conjunto de Dados')
+    plt.show()
+
+def run_logistic_regression_evaluation(file_path):
     df = load_and_prepare_data(file_path)
 
     label_column = detect_label_column(df)
@@ -50,16 +59,20 @@ def main(file_path):
 
     print(f"Acurácias de cada fold: {accuracies}")
     mean_accuracy = np.mean(accuracies)
-    print(f"Acurácia média: {mean_accuracy:.2f}")
 
-    plt.bar(range(1, len(accuracies) + 1), accuracies)
-    plt.axhline(y=mean_accuracy, color='r', linestyle='--', label='Acurácia Média')
-    plt.xlabel('Fold')
-    plt.ylabel('Acurácia')
-    plt.title('Acurácia do Classificador em cada Fold')
-    plt.legend()
-    plt.show()
+    return mean_accuracy
 
-file_path = './diabetes.csv'
+def main(mean_accuracy, file_paths):
+    for file_path in file_paths:
+        mean_accuracy = run_logistic_regression_evaluation(file_path)
+        mean_accuracies.append(mean_accuracy)
 
-main(file_path)
+    for i, mean_accuracy in enumerate(mean_accuracies):
+        print(f"Acurácia média para {file_paths[i]}: {mean_accuracy:.2f}")
+
+    plot_mean_accuracy_graph(mean_accuracies)
+
+file_paths = ['winequality-red.csv', 'diabetes.csv']
+mean_accuracies = []
+
+main(mean_accuracies, file_paths)
