@@ -10,6 +10,7 @@ def load_and_prepare_data(file_path):
 
     if(file_path == 'cancer.csv'):
         df = df.drop(columns=['Unnamed: 32'])
+        df = df.drop(columns=['id'])
 
     missing_values = df.isnull().sum()
     if missing_values.any():
@@ -22,7 +23,8 @@ def load_and_prepare_data(file_path):
 
 def detect_label_column(df, file_path):
     if(file_path == 'cancer.csv'):
-        label_column = df.columns[1]
+        print(df.columns[0])
+        label_column = df.columns[0]
     else:
         label_column = df.columns[-1]
 
@@ -90,7 +92,7 @@ def main(mean_accuracy, file_paths):
 
     plot_mean_accuracy_graph(mean_accuracies)
 
-file_paths = ['winequality-red.csv', 'diabetes.csv', 'cancer.csv']
+file_paths = ['winequality-red.csv', 'diabetes.csv', 'cancer.csv', 'heart.csv']
 mean_accuracies = []
 
 main(mean_accuracies, file_paths)
