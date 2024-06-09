@@ -8,6 +8,9 @@ import numpy as np
 def load_and_prepare_data(file_path):
     df = pd.read_csv(file_path)
 
+    if(file_path == 'UCI_Credit_Card.csv'):
+        df = df.drop(columns=['ID'])
+        
     if(file_path == 'cancer.csv'):
         df = df.drop(columns=['Unnamed: 32'])
         df = df.drop(columns=['id'])
@@ -92,7 +95,7 @@ def main(mean_accuracy, file_paths):
 
     plot_mean_accuracy_graph(mean_accuracies)
 
-file_paths = ['winequality-red.csv', 'diabetes.csv', 'cancer.csv', 'heart.csv']
+file_paths = ['winequality-red.csv', 'diabetes.csv', 'cancer.csv', 'heart.csv', 'UCI_Credit_Card.csv']
 mean_accuracies = []
 
 main(mean_accuracies, file_paths)
