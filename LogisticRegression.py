@@ -29,7 +29,6 @@ def load_and_prepare_data(file_path):
 
 def detect_label_column(df, file_path):
     if(file_path == 'cancer.csv'):
-        print(df.columns[0])
         label_column = df.columns[0]
     else:
         label_column = df.columns[-1]
@@ -88,7 +87,7 @@ def run_logistic_regression_evaluation(file_path):
 
     return mean_accuracy
 
-def main(mean_accuracy, file_paths):
+def main(mean_accuracies, file_paths):
     for file_path in file_paths:
         mean_accuracy = run_logistic_regression_evaluation(file_path)
         mean_accuracies.append(mean_accuracy)
