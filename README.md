@@ -1,3 +1,12 @@
-IAsnamoradinha? não temos.
+Integrantes:
+    Matheus Mota
+    Yan Marcos
+    Thiago Aparecido
 
-peito
+Arquivo principal jupyter:
+    main.ipynb
+
+Arquivo principal HTML:
+    main.html
+
+Link para o vídeo:
